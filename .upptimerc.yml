@@ -1,31 +1,76 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# Copyright © 2026 NVest Analytics, Inc. All rights reserved.
+# Author: Kevin Chalmers
+# Upptime config for the Recall status page - SCAFFOLD (2026-07-21).
+#
+# ⚠ This file does NOT run from here. Upptime is a self-contained
+# GitHub-Pages repo generated from the upptime/upptime template; its
+# workflows commit uptime history into that repo every 5 minutes, which is
+# why it must NOT live inside the app repo. Activation (one-click-ish, see
+# docs/STATUS_PAGE.md): create `recall-status` from the template, copy this
+# file to its ROOT as `.upptimerc.yml`, add the GH_PAT secret, enable Pages.
+#
+# Reference: https://upptime.js.org/docs/configuration
+
+owner: kevinsctx # GitHub username/org that owns the recall-status repo
+repo: recall-status # the template-generated repo this file will live in
+
+# WHO HEARS ABOUT AN OUTAGE (CEO 2026-09-03). Downtime opens a GitHub issue in
+# this repo; GitHub emails whoever watches the repo and whoever the issue is
+# assigned to. Make that support@nvestanalytics.com - a different domain and a
+# different mail system from the product, so it still arrives when
+# recallworkspace.com or its mail provider is the thing that is down. Not
+# Slack, not Discord: Recall is the product. Assignees must be GitHub users;
+# put the account that reads support@nvestanalytics.com here.
 
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  # PRODUCTION FIRST. It is the one with customers on it, and it went live on
+  # 2026-09-01 while this file still watched only staging - so for two days the
+  # machine that mattered had no external monitoring at all and the machine that
+  # did not matter had all of it.
+  - name: Recall (production)
+    # /health is the DB-probing liveness endpoint (backend/app/main.py):
+    # 200 = app up AND database reachable; 503 = degraded. Exactly what a status
+    # page should key on - not just nginx answering.
+    url: https://recallworkspace.com/health
+    expectedStatusCodes:
+      - 200
+  # /ready is the DEPENDENCY probe: database, search, storage and LiveKit. It is
+  # a separate check on purpose - /health can be 200 while video is dead, which
+  # is exactly the state production was in on 2026-09-03.
+  #
+  # HONEST LIMIT, worth knowing before trusting it: /ready checks that LiveKit is
+  # REACHABLE, not that it can host a call. Production once answered livekit:true
+  # while every call failed with "could not find any available nodes". Only the
+  # production smoke (frontend/e2e/prod/prod-smoke.mjs) proves calls work.
+  - name: Recall (production dependencies)
+    url: https://recallworkspace.com/ready
+    expectedStatusCodes:
+      - 200
+  - name: Recall (staging)
+    url: https://recall.nvestanalytics.com/health
+    expectedStatusCodes:
+      - 200
+  # Marketing asset host. Lives on the STAGING droplet with its own certificate
+  # (see docs/ENVIRONMENT_TERMINOLOGY.md) - it is not part of either environment
+  # and it is easy to forget until a certificate lapses.
+  - name: Recall assets
+    url: https://assets.recallworkspace.com
+    check: "http" # HEAD is fine for the static origin
 
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  # Default: free GitHub Pages at https://kevinsctx.github.io/recall-status
+  # Later (optional): point status.recallworkspace.com at Pages and set:
+  # cname: status.recallworkspace.com
+  name: Recall Status
+  theme: dark
   navbar:
     - title: Status
       href: /
-    - title: GitHub
-      href: https://github.com/$OWNER/$REPO
+    - title: App
+      href: https://recallworkspace.com
 
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
+# Every 5 min uptime check is the template default. Keep commit noise off
+# the app repo - that's the whole point of the separate repo.
+assignees:
+  - kevinsctx
+ # add GitHub handles to auto-assign downtime issues
