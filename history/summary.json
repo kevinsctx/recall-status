@@ -59,18 +59,16 @@
     "icon": "https://icons.duckduckgo.com/ip3/assets.recallworkspace.com.ico",
     "slug": "recall-assets",
     "status": "up",
-    "uptime": "3.43%",
-    "uptimeDay": "3.43%",
-    "uptimeWeek": "3.43%",
-    "uptimeMonth": "3.43%",
-    "uptimeYear": "3.43%",
+    "uptime": "100.00%",
+    "uptimeDay": "100.00%",
+    "uptimeWeek": "100.00%",
+    "uptimeMonth": "100.00%",
+    "uptimeYear": "100.00%",
     "time": 436,
     "timeDay": 436,
     "timeWeek": 436,
     "timeMonth": 436,
     "timeYear": 436,
-    "dailyMinutesDown": {
-      "2026-09-03": 8
-    }
+    "dailyMinutesDown": {}
   }
 ]
