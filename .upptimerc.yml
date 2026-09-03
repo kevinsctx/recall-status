@@ -53,9 +53,11 @@ sites:
   # Marketing asset host. Lives on the STAGING droplet with its own certificate
   # (see docs/ENVIRONMENT_TERMINOLOGY.md) - it is not part of either environment
   # and it is easy to forget until a certificate lapses.
+  # A real file, not the root: the asset origin serves files only and answers
+  # 404 at / by design, which read as "down" on the very first check.
   - name: Recall assets
-    url: https://assets.recallworkspace.com
-    check: "http" # HEAD is fine for the static origin
+    url: https://assets.recallworkspace.com/marketing/recall/social/prelaunch/shared/start-free-v1.png
+    check: "http"
 
 status-website:
   # Default: free GitHub Pages at https://kevinsctx.github.io/recall-status
